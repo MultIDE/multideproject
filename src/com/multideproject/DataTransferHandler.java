@@ -37,12 +37,11 @@ public class DataTransferHandler implements Runnable {
 	public void recieve() {
 		recieve = new Thread("Recieve") {
 			public void run() {
+                BufferedReader fromServer;
 				while(running) {
 					String input = "";
 					try {
-						BufferedReader fromServer = 
-							new BufferedReader(
-									new InputStreamReader(clientSocket.getInputStream()));
+						fromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 						input = fromServer.readLine();
 					} catch (IOException e) {
 						MultIDE.establishConnection(MultIDE.getIp(), MultIDE.getPort());
@@ -51,6 +50,7 @@ public class DataTransferHandler implements Runnable {
 						manageInput(input);
 					}
 				}
+                fromServer.close();
 			}
 		};
 		recieve.start();
@@ -101,13 +101,12 @@ public class DataTransferHandler implements Runnable {
 					os = clientSocket.getOutputStream();
 					os.write(mybytearray,0,mybytearray.length);
 					os.flush();
-					if (fis != null) fis.close();
-					if (bis != null) bis.close();
-					if (os != null) os.close();
 		        } catch (IOException e) {
 					e.printStackTrace();
 				}
 			}
+					if (fis != null) fis.close();
+					if (bis != null) bis.close();
 		};
 		sendFile.start();
 	}
